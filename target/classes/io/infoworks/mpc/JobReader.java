@@ -36,6 +36,7 @@ public class JobReader implements Runnable {
       ((BasicDBObject) updChild).put("runner",name);
       DBObject upd = new BasicDBObject();
       ((BasicDBObject) upd).put("$set",updChild);
+
       DBObject jobToProcess = queue.findAndModify(query,upd);
       if (jobToProcess!=null) {
         Object seqNumber = jobToProcess.get("seqNumber");

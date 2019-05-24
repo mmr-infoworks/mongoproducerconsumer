@@ -17,4 +17,106 @@
 
   </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>databricks-client-1.0-SNAPSHOT.jar</include>
+        </includes>
+        <excludes>
+          <exclude>conf/**</exclude>
+          <exclude>conf</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+
+        <configuration>
+          <excludes>
+            <exclude>conf/**</exclude>
+            <exclude>conf/</exclude>
+            <exclude>src/main/resources/conf/</exclude>
+          </excludes>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+          <execution>
+            <id>test-coverage</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <propertyName>jacocoArgLine</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Maven Assembly Plugin -->
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>io.infoworks.Application</Main-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+              <artifactSet>
+              </artifactSet>
+              <outputFile>
+                ${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+              </outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+
+  </build>
+
 </project>
